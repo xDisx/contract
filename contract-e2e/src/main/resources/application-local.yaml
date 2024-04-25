@@ -1,0 +1,5 @@
+xdisx:
+  service:
+    contract:
+      client-name: contract-app
+      url: http://localhost:1242

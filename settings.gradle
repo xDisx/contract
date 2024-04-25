@@ -1,2 +1,2 @@
 rootProject.name = 'contract'
-include 'contract-api', 'contract-app'
+include 'contract-api', 'contract-app', 'contract-e2e'

@@ -1,58 +1,43 @@
-plugins {
-	// Plugin definitions for plugins that are common to all subprojects
-	// but do not need to be immediately applied to the root project
-	id 'io.spring.dependency-management' version '1.1.4' apply false
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:3.2.5"
+	}
 }
 
-group = 'com.xdisx'
-version = '0.0.1-SNAPSHOT'
+plugins {
+	id 'io.spring.dependency-management' version '1.1.4'
+}
 
-// Configure settings for all subprojects
-subprojects {
-	// Apply plugins that should be used in every subproject
-	apply plugin: 'java'
-	apply plugin: 'io.spring.dependency-management'
-
-	// Configure the repositories block to tell Gradle where to find dependencies
+allprojects {
+	group 'com.xdisx'
+	version '0.1.0'
 	repositories {
-		mavenCentral() // This can be Maven Central, JCenter, or any other repository of your choice
+		mavenCentral()
 		maven { url 'https://repo.spring.io/milestone' }
+		maven { url 'https://repo.spring.io/snapshot' }
 	}
+}
+
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
 
 	dependencyManagement {
 		imports {
-			mavenBom "org.springframework.boot:spring-boot-dependencies:2.6.6" // replace with the version you're using
+			mavenBom "org.springframework.boot:spring-boot-dependencies:3.2.4"
 			mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
 		}
 	}
 
-	// Set up common configurations like Java version compatibility
-	java {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
-	}
-
-	// Define configurations that extend others, e.g., annotationProcessor paths
-	configurations {
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
-	}
-
-	// Define common dependencies that all subprojects should have
 	dependencies {
-		// Define dependencies that are common to all subprojects here
-		// For example, you might want to include a common logging library like SLF4J
-		implementation 'org.slf4j:slf4j-api'
-		implementation 'ch.qos.logback:logback-classic'
-		testImplementation 'junit:junit:4.13.2'
-	}
+		compileOnly 'org.projectlombok:lombok:1.18.32'
+		annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
-	// Define common tasks if needed
-	tasks.withType(JavaCompile) {
-		options.encoding = 'UTF-8'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.5'
+		testCompileOnly 'org.projectlombok:lombok:1.18.32'
+		testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 	}
 }
-
-// Here you can define tasks and configurations that are specific to the root project
-// ...
