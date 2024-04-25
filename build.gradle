@@ -16,11 +16,13 @@ subprojects {
 	// Configure the repositories block to tell Gradle where to find dependencies
 	repositories {
 		mavenCentral() // This can be Maven Central, JCenter, or any other repository of your choice
+		maven { url 'https://repo.spring.io/milestone' }
 	}
 
 	dependencyManagement {
 		imports {
 			mavenBom "org.springframework.boot:spring-boot-dependencies:2.6.6" // replace with the version you're using
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
 		}
 	}
 
