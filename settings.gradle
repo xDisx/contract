@@ -1,0 +1,2 @@
+rootProject.name = 'contract'
+include 'contract-api', 'contract-app'
