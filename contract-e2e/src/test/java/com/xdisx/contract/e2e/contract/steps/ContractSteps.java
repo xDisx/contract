@@ -1,29 +1,49 @@
 package com.xdisx.contract.e2e.contract.steps;
 
 import com.xdisx.contract.e2e.CucumberBootstrap;
+import com.xdisx.contract.e2e.common.utils.AssertionsUtils;
 import com.xdisx.contract.e2e.contract.rest.ContractController;
+import com.xdisx.contract.e2e.contract.steps.service.RequestBuilderServiceContract;
+import feign.FeignException;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpStatus.OK;
+
 @RequiredArgsConstructor
 public class ContractSteps extends CucumberBootstrap {
 
-  private final ContractController contractController;
+  private final RequestBuilderServiceContract requestBuilder;
 
-  @When("I call the test api")
-  public void iCallTheTestApi() {
-    String rez = contractController.salut(22);
-    System.out.println("am primit rezultat " + rez);
+  @Before
+  public void setup() {
+    contractCreationContext.reset();
   }
 
-  @Then("I receive the doubled number")
-  public void iReceiveTheDoubledNumber() {
-    try {
-      Thread.sleep(10000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+  private final ContractController contractController;
+
+    @When("I create a new contract")
+    public void iCreateANewContract() {
+        var createContractRequest = requestBuilder.buildContractCreateRequest();
+
+        try{
+          contractCreationContext.setResponse(contractController.createContract(createContractRequest));
+          contractCreationContext.setStatus(OK.value());
+        } catch (FeignException e) {
+          contractCreationContext.setStatus(e.status());
+          contractCreationContext.setException(e);
+        }
+
     }
-    System.out.println("am fost pe aici");
+
+  @Then("I receive the created contract")
+  public void iReceiveTheCreatedContract() {
+    AssertionsUtils.assertAPISuccess(contractCreationContext);
+
+    var contractResponse = contractCreationContext.getResponse();
+    assertNotNull(contractResponse);
   }
 }
