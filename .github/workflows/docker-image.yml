@@ -5,16 +5,22 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Docker Build and Push
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    - name: Build with Gradle
+      run: |
+        chmod +x ./gradlew
+        ./gradlew clean build -x test
+    - name: Build Docker Image and Push
       run: |
         echo ${{ secrets.GH_PAT }} | sudo docker login ghcr.io -u magraul --password-stdin
-        gradle clean build -x test
         docker build . --file Dockerfile --tag ghcr.io/magraul/contract-app:latest
         docker push ghcr.io/magraul/contract-app:latest
