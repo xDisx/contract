@@ -19,6 +19,12 @@ jobs:
       run: |
         chmod +x ./gradlew
         ./gradlew clean build -x test
+    - name: Login to GitHub Container Registry
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
+      run: |
+        echo "$GH_PAT" | docker login ghcr.io -u magraul --password-stdin
+
     - name: Build Docker Image and Push
       run: |
         echo ${{ secrets.GH_PAT }} | sudo docker login ghcr.io -u magraul --password-stdin
