@@ -30,3 +30,10 @@ jobs:
         cd ./contract-app
         docker build . --file Dockerfile --tag ghcr.io/magraul/contract-app:latest
         docker push ghcr.io/magraul/contract-app:latest
+
+    - name: Publish API Package
+      run: |
+        ./gradlew :contract-api:publish
+      env:
+        GITHUB_ACTOR: 'magraul'
+        GITHUB_TOKEN: ${{ secrets.GH_SHARED_LIB_PAT }}
