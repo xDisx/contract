@@ -11,9 +11,10 @@ import java.math.BigInteger;
 public class ContractMock {
     private static final String CONTRACT_TYPE = "New Contract";
   private static final BigInteger CONTRACT_ID = BigInteger.ONE;
+    private static final BigInteger CUSTOMER_ID = BigInteger.ONE;
 
     public static ContractCreateRequestDto getCreateContractRequest() {
-        return ContractCreateRequestDto.builder().contractType(CONTRACT_TYPE).build();
+        return ContractCreateRequestDto.builder().contractType(CONTRACT_TYPE).customerId(CUSTOMER_ID).build();
     }
 
     public static ContractResponseDto getContractResponse() {

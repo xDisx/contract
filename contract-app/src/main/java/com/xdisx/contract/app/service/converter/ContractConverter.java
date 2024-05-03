@@ -15,6 +15,6 @@ public class ContractConverter {
     }
 
     public ContractResponseDto toContractResponse(ContractEntity contract) {
-        return ContractResponseDto.builder().ID(contract.getId()).contractType(contract.getContractType() + " hello").build();
+        return ContractResponseDto.builder().ID(contract.getId()).contractType(contract.getContractType()).build();
     }
 }
