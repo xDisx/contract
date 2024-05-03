@@ -7,14 +7,14 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ContractConverter {
-    public ContractEntity fromCreateRequest(ContractCreateRequestDto createRequestDto) {
+    public static ContractEntity fromCreateRequest(ContractCreateRequestDto createRequestDto) {
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setContractType(createRequestDto.getContractType());
 
         return contractEntity;
     }
 
-    public ContractResponseDto toContractResponse(ContractEntity contract) {
+    public static ContractResponseDto toContractResponse(ContractEntity contract) {
         return ContractResponseDto.builder().ID(contract.getId()).contractType(contract.getContractType()).build();
     }
 }
