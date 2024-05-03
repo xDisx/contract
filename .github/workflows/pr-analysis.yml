@@ -31,3 +31,6 @@ jobs:
           args: >
             -Dsonar.projectKey=xDisx_contract
             -Dsonar.organization=xdisx
+            -Dsonar.sources=contract-app/src
+            -Dsonar.java.binaries=contract-app/build/classes/java/main
+            
