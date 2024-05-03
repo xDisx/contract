@@ -30,4 +30,4 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=xDisx_contract
-            -Dsonar.organization=xDisx
+            -Dsonar.organization=xdisx
