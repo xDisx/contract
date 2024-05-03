@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ContractServiceImpl implements ContractService {
-    private static final String CONTRACT_SAVE_ERROR = "Unable to save contract";
+    public static final String CONTRACT_SAVE_ERROR = "Unable to save contract";
     private final ContractRepository contractRepository;
 
     @Override
