@@ -13,15 +13,15 @@ public class ContractMock {
   private static final BigInteger CONTRACT_ID = BigInteger.ONE;
     private static final BigInteger CUSTOMER_ID = BigInteger.ONE;
 
-    public static ContractCreateRequestDto getCreateContractRequest() {
+    public ContractCreateRequestDto getCreateContractRequest() {
         return ContractCreateRequestDto.builder().contractType(CONTRACT_TYPE).customerId(CUSTOMER_ID).build();
     }
 
-    public static ContractResponseDto getContractResponse() {
+    public ContractResponseDto getContractResponse() {
         return ContractResponseDto.builder().contractType(CONTRACT_TYPE).ID(CONTRACT_ID).build();
     }
 
-    public static ContractEntity getContractEntity(ContractCreateRequestDto requestDto) {
+    public ContractEntity getContractEntity(ContractCreateRequestDto requestDto) {
         ContractEntity contractEntity = new ContractEntity();
         contractEntity.setContractType(requestDto.getContractType());
         contractEntity.setId(CONTRACT_ID);
