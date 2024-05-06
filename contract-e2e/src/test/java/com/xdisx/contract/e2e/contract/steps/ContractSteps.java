@@ -1,8 +1,10 @@
 package com.xdisx.contract.e2e.contract.steps;
 
+import com.xdisx.contract.api.dto.request.ContractPageRequestDto;
 import com.xdisx.contract.e2e.CucumberBootstrap;
 import com.xdisx.contract.e2e.common.utils.AssertionsUtils;
 import com.xdisx.contract.e2e.contract.rest.ContractController;
+import com.xdisx.contract.e2e.contract.steps.context.GetContractsContext;
 import com.xdisx.contract.e2e.contract.steps.service.RequestBuilderServiceContract;
 import feign.FeignException;
 import io.cucumber.java.Before;
@@ -17,6 +19,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class ContractSteps extends CucumberBootstrap {
 
   private final RequestBuilderServiceContract requestBuilder;
+  private GetContractsContext getContractsContext;
 
   @Before
   public void setup() {
@@ -45,5 +48,26 @@ public class ContractSteps extends CucumberBootstrap {
 
     var contractResponse = contractCreationContext.getResponse();
     assertNotNull(contractResponse);
+  }
+
+    @When("I request the first page of contracts")
+    public void iRequestTheFirstPageOfContracts() {
+      var getContractsRequest = ContractPageRequestDto.builder().build();
+      getContractsContext = new GetContractsContext();
+      try {
+        getContractsContext.setContractPageResponseDto(contractController.getContracts(getContractsRequest));
+        getContractsContext.setStatus(OK.value());
+      } catch (FeignException e) {
+        getContractsContext.setException(e);
+      }
+
+
+    }
+
+  @Then("I receive a page of contracts")
+  public void iReceiveAPageOfContracts() {
+      AssertionsUtils.assertAPISuccess(getContractsContext);
+      var response = getContractsContext.getContractPageResponseDto();
+      assertNotNull(response);
   }
 }

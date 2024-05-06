@@ -6,7 +6,7 @@ on:
     types: ["opened", "synchronize", "reopened"]
 
 jobs:
-  Continous-PR-Checks:
+  Continuous-PR-Checks:
     runs-on: ubuntu-latest
 
     steps:
