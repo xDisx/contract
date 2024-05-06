@@ -1,17 +1,33 @@
 package com.xdisx.contract.app.service;
 
 import com.xdisx.contract.api.dto.request.ContractCreateRequestDto;
+import com.xdisx.contract.api.dto.request.ContractPageRequestDto;
+import com.xdisx.contract.api.dto.response.ContractPageResponseDto;
 import com.xdisx.contract.api.dto.response.ContractResponseDto;
 import com.xdisx.contract.api.exception.ContractCreateException;
 import com.xdisx.contract.app.mock.ContractMock;
+import com.xdisx.contract.app.mock.ContractPageDtoMock;
 import com.xdisx.contract.app.repository.db.ContractRepository;
+import com.xdisx.contract.app.repository.db.dto.ContractPageDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
+import com.xdisx.contract.app.service.converter.ContractConverter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import static com.xdisx.contract.app.service.ContractServiceImpl.CONTRACT_SAVE_ERROR;
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,5 +78,47 @@ class ContractServiceImplTest {
     }, "Expected createContract to throw, but it didn't");
 
     assertEquals(CONTRACT_SAVE_ERROR, thrown.getMessage(), "Exception message does not match");
+  }
+
+  @Test
+  void testFindContractsReturnsCorrectData() {
+    Pageable pageable = PageRequest.of(0, 10);
+    List<ContractPageDto> contractEntityList =
+            List.of(new ContractPageDtoMock());
+    Page<ContractPageDto> contractPage =
+            new PageImpl<>(contractEntityList, pageable, contractEntityList.size());
+
+    when(contractRepository.findBy(ArgumentMatchers.<Specification<ContractEntity>>any(), any()))
+            .thenReturn(contractPage);
+
+    ContractPageResponseDto result =
+            classUnderTest.findContracts(
+                    ContractPageRequestDto.builder().build());
+
+    assertNotNull(result);
+    assertEquals(contractEntityList.size(), result.getContracts().size());
+
+    verify(contractRepository).findBy(ArgumentMatchers.<Specification<ContractEntity>>any(), any());
+  }
+
+  @Test
+  void testFindContractsByCreatedOn() {
+    Pageable pageable = PageRequest.of(0, 10);
+    List<ContractPageDto> contractEntityList =
+            List.of(new ContractPageDtoMock());
+    Page<ContractPageDto> contractPage =
+            new PageImpl<>(contractEntityList, pageable, contractEntityList.size());
+
+    when(contractRepository.findBy(ArgumentMatchers.<Specification<ContractEntity>>any(), any()))
+            .thenReturn(contractPage);
+
+    ContractPageResponseDto result =
+            classUnderTest.findContracts(
+                    ContractPageRequestDto.builder().createdOn(LocalDate.now()).build());
+
+    assertNotNull(result);
+    assertEquals(contractEntityList.size(), result.getContracts().size());
+
+    verify(contractRepository).findBy(ArgumentMatchers.<Specification<ContractEntity>>any(), any());
   }
 }

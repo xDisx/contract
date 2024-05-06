@@ -1,11 +1,13 @@
 package com.xdisx.contract.app.mock;
 
 import com.xdisx.contract.api.dto.request.ContractCreateRequestDto;
+import com.xdisx.contract.api.dto.response.ContractPageResponseDto;
 import com.xdisx.contract.api.dto.response.ContractResponseDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @UtilityClass
 public class ContractMock {
@@ -27,5 +29,14 @@ public class ContractMock {
         contractEntity.setId(CONTRACT_ID);
 
         return contractEntity;
+    }
+
+    public static ContractPageResponseDto getContractPageResponse() {
+        ContractPageResponseDto contractPageResponseDto = new ContractPageResponseDto();
+        contractPageResponseDto.setTotalPages(1);
+        contractPageResponseDto.setTotalElements(1);
+        contractPageResponseDto.setContracts(List.of(getContractResponse()));
+
+        return contractPageResponseDto;
     }
 }

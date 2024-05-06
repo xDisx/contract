@@ -3,6 +3,8 @@ package com.xdisx.contract.app.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.xdisx.contract.api.dto.request.ContractPageRequestDto;
+import com.xdisx.contract.api.dto.response.ContractPageResponseDto;
 import com.xdisx.contract.api.dto.response.ContractResponseDto;
 import com.xdisx.contract.app.mock.ContractMock;
 import com.xdisx.contract.app.util.FileReadUtil;
@@ -24,7 +26,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.text.SimpleDateFormat;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,7 +41,9 @@ class ContractControllerTest {
                   .registerModule(new JavaTimeModule())
                   .setDateFormat(new SimpleDateFormat("dd.MM.yyyy"));
   private static final String CONTRACT_PATH = "/xdisx/contract";
+  private static final String CONTRACTS_PATH = "/xdisx/contracts";
   private static final String CONTRACT_RESPONSE_JSON = "ContractResponse.json";
+  private static final String CONTRACTS_RESPONSE_JSON = "ContractsResponse.json";
 
   @Mock
   private ContractService contractService;
@@ -83,5 +90,25 @@ class ContractControllerTest {
     JSONAssert.assertEquals(expectedResponse, apiResponse, JSONCompareMode.LENIENT);
   }
 
+  @Test
+  void getContracts() throws Exception {
+    ContractPageResponseDto responseDto = ContractMock.getContractPageResponse();
+    when(contractService.findContracts(any(ContractPageRequestDto.class))).thenReturn(responseDto);
 
+    var apiResponse =
+            mockMvc
+                    .perform(
+                            get(CONTRACTS_PATH)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+    assertNotNull(apiResponse);
+    var expectedResponse = FileReadUtil.readResourceAsString(CONTRACTS_RESPONSE_JSON);
+    JSONAssert.assertEquals(expectedResponse, apiResponse, JSONCompareMode.LENIENT);
+  }
 }
