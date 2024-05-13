@@ -1,3 +1,9 @@
 {
-  "contractType": "New Contract"
+  "customerId": 75,
+  "productId": 11,
+  "period": 2,
+  "price": 234,
+  "deviceCode": "1234343",
+  "deviceType": "SMARTPHONE",
+  "acquisitionDate": "2024-03-31"
 }

@@ -8,6 +8,7 @@ import com.xdisx.contract.api.exception.ContractCreateException;
 import com.xdisx.contract.app.repository.db.ContractRepository;
 import com.xdisx.contract.app.repository.db.dto.ContractPageDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
+import com.xdisx.contract.app.repository.db.entity.ContractStatus;
 import com.xdisx.contract.app.repository.db.filtering.ContractSpecificationBuilder;
 import com.xdisx.contract.app.service.converter.ContractConverter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,9 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public ContractResponseDto createContract(ContractCreateRequestDto contractCreateRequest) {
         ContractEntity contract = ContractConverter.fromCreateRequest(contractCreateRequest);
+
+        contract.setCustomerName("Bob");
+        contract.setContractStatus(ContractStatus.CREATED);
 
         contract = saveAndFlushContract(contract);
         return ContractConverter.toContractResponse(contract);

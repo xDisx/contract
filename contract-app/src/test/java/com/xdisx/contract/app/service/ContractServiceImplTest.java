@@ -49,11 +49,14 @@ class ContractServiceImplTest {
     ContractEntity contract2 = ContractMock.getContractEntity(requestDto);
     assertEquals(contract, contract2);
 
-    when(contractRepository.saveAndFlush(argThat(arg ->requestDto.getContractType().equals(arg.getContractType())))).thenReturn(contract);
+    when(contractRepository.saveAndFlush(argThat(arg ->requestDto.getCustomerId().equals(arg.getCustomerId()) && requestDto.getProductId().equals(arg.getProductId())))).thenReturn(contract);
     var savedContract = classUnderTest.createContract(requestDto);
 
     verify(contractRepository).saveAndFlush(argThat(arg -> {
-      assertEquals(requestDto.getContractType(), arg.getContractType());
+      assertEquals(requestDto.getCustomerId(), arg.getCustomerId());
+      assertEquals(requestDto.getDeviceCode(), arg.getDeviceCode());
+      assertEquals(requestDto.getPeriod(), arg.getPeriod());
+      assertEquals(requestDto.getProductId(), arg.getProductId());
       return true;
     }));
 
@@ -62,7 +65,10 @@ class ContractServiceImplTest {
   }
 
   private void assertContractResponseWithRequest(ContractCreateRequestDto requestDto, ContractResponseDto responseDto) {
-    assertEquals(requestDto.getContractType(), responseDto.getContractType());
+    assertEquals(requestDto.getCustomerId(), responseDto.getCustomerId());
+    assertEquals(requestDto.getDeviceCode(), responseDto.getDeviceCode());
+    assertEquals(requestDto.getPeriod(), responseDto.getPeriod());
+    assertEquals(requestDto.getProductId(), responseDto.getProductId());
   }
 
   @Test
