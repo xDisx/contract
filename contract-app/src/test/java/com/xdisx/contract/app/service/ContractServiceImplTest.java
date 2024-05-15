@@ -134,6 +134,7 @@ class ContractServiceImplTest {
                 .customerName("Bob")
                 .deviceCode("123455")
                 .contractStatus(ContractStatusDto.CREATED)
+                    .customerId(BigInteger.ONE)
                 .build());
 
     assertNotNull(result);
