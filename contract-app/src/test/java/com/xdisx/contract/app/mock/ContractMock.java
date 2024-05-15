@@ -9,6 +9,7 @@ import com.xdisx.contract.app.repository.db.entity.ContractEntity;
 import com.xdisx.contract.app.repository.db.entity.ContractStatus;
 import com.xdisx.contract.app.repository.db.entity.DeviceType;
 import com.xdisx.customer.api.dto.response.CustomerResponseDto;
+import com.xdisx.product.api.dto.response.ProductResponseDto;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -84,4 +85,8 @@ public class ContractMock {
   public static CustomerResponseDto getCustomerResponse() {
     return CustomerResponseDto.builder().ID(BigInteger.TWO).firstName("Bob").lastName("Bobb").build();
   }
+
+    public static ProductResponseDto getProductResponse() {
+    return ProductResponseDto.builder().productName("Basic product").build();
+    }
 }

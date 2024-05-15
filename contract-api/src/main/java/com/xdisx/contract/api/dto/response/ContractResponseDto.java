@@ -35,4 +35,5 @@ public class ContractResponseDto {
     private ContractStatusDto contractStatus;
     private LocalDate contractStartDate;
     private LocalDate contractPlannedEndDate;
+    private String productName;
 }

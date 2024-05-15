@@ -57,10 +57,15 @@ public class ContractEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ContractStatus contractStatus;
 
+
     @Column(name = "contract_start_date")
     private LocalDate contractStartDate;
 
     @Column(name = "contract_planned_end_date")
     private LocalDate contractPlannedEndDate;
+
+    @NotNull
+    @Column(name = "product_name")
+    private String productName;
 
 }

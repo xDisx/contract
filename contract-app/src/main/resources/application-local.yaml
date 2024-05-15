@@ -38,3 +38,5 @@ xdisx:
   contract:
     customer:
       url: http://localhost:1239
+    product:
+      url: http://localhost:1240
