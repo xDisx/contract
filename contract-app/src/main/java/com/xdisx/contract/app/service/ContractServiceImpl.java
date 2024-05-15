@@ -14,6 +14,7 @@ import com.xdisx.contract.app.repository.db.dto.ContractPageDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
 import com.xdisx.contract.app.repository.db.entity.ContractStatus;
 import com.xdisx.contract.app.repository.db.filtering.ContractSpecificationBuilder;
+import com.xdisx.contract.app.repository.product.ProductRepository;
 import com.xdisx.contract.app.service.converter.ContractConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class ContractServiceImpl implements ContractService {
     public static final String CONTRACT_SAVE_ERROR = "Unable to save contract";
     private final ContractRepository contractRepository;
     private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -41,8 +43,11 @@ public class ContractServiceImpl implements ContractService {
         ContractEntity contract = ContractConverter.fromCreateRequest(contractCreateRequest);
 
         var customer = customerRepository.getCustomer(contract.getCustomerId());
+        var product = productRepository.getProduct(contract.getProductId());
 
         contract.setCustomerName(String.format("%s %s", customer.getFirstName(), customer.getLastName()));
+        contract.setProductName(product.getProductName());
+
         contract.setContractStatus(ContractStatus.CREATED);
 
         contract = saveAndFlushContract(contract);

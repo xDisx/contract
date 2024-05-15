@@ -10,3 +10,5 @@ spring:
         logLevel: BASIC
       customer:
         client-name: customer-app
+      product:
+        client-name: product-app

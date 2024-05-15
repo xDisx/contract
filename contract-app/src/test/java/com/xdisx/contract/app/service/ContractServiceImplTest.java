@@ -15,6 +15,7 @@ import com.xdisx.contract.app.repository.db.ContractRepository;
 import com.xdisx.contract.app.repository.db.dto.ContractPageDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
 import com.xdisx.contract.app.repository.db.entity.ContractStatus;
+import com.xdisx.contract.app.repository.product.ProductRepository;
 import com.xdisx.contract.app.service.converter.ContractConverter;
 import com.xdisx.customer.api.dto.response.CustomerResponseDto;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,9 @@ class ContractServiceImplTest {
   @Mock
   private CustomerRepository customerRepository;
 
+  @Mock
+  private ProductRepository productRepository;
+
   @InjectMocks
   private ContractServiceImpl classUnderTest;
 
@@ -61,6 +65,7 @@ class ContractServiceImplTest {
 
     when(contractRepository.saveAndFlush(argThat(arg ->requestDto.getCustomerId().equals(arg.getCustomerId()) && requestDto.getProductId().equals(arg.getProductId())))).thenReturn(contract);
     when(customerRepository.getCustomer(requestDto.getCustomerId())).thenReturn(ContractMock.getCustomerResponse());
+    when(productRepository.getProduct(requestDto.getProductId())).thenReturn(ContractMock.getProductResponse());
 
     var savedContract = classUnderTest.createContract(requestDto);
 
@@ -87,6 +92,7 @@ class ContractServiceImplTest {
   void createContract_throwsExceptionWhenDataIntegrityIsViolated() {
     ContractCreateRequestDto requestDto = ContractMock.getCreateContractRequest();
     when(customerRepository.getCustomer(requestDto.getCustomerId())).thenReturn(ContractMock.getCustomerResponse());
+    when(productRepository.getProduct(requestDto.getProductId())).thenReturn(ContractMock.getProductResponse());
 
     doThrow(new DataIntegrityViolationException("Database error"))
             .when(contractRepository)

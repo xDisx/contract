@@ -81,4 +81,9 @@ public class ContractPageDtoMock implements ContractPageDto {
     public LocalDate getContractPlannedEndDate() {
         return LocalDate.now().plusYears(1);
     }
+
+    @Override
+    public String getProductName() {
+        return "Basic assurance";
+    }
 }
