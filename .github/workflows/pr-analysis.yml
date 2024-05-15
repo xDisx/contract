@@ -21,6 +21,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build and run tests
+        env:
+          GITHUB_ACTOR: 'magraul'
+          GITHUB_TOKEN: ${{ secrets.GH_SHARED_LIB_PAT }}
         run: ./gradlew clean build
 
       - name: Cache SonarCloud packages
