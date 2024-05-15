@@ -36,4 +36,6 @@ public class ContractPageRequestDto {
     private LocalDate createdOn;
     private BigInteger customerId;
     private ContractStatusDto contractStatus;
+    private String customerName;
+    private String deviceCode;
 }
