@@ -44,17 +44,13 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ContractServiceImplTest {
-  @Mock
-  private ContractRepository contractRepository;
+  @Mock private ContractRepository contractRepository;
 
-  @Mock
-  private CustomerRepository customerRepository;
+  @Mock private CustomerRepository customerRepository;
 
-  @Mock
-  private ProductRepository productRepository;
+  @Mock private ProductRepository productRepository;
 
-  @InjectMocks
-  private ContractServiceImpl classUnderTest;
+  @InjectMocks private ContractServiceImpl classUnderTest;
 
   @Test
   void createContract() {
@@ -63,25 +59,36 @@ class ContractServiceImplTest {
     ContractEntity contract2 = ContractMock.getContractEntity();
     assertEquals(contract, contract2);
 
-    when(contractRepository.saveAndFlush(argThat(arg ->requestDto.getCustomerId().equals(arg.getCustomerId()) && requestDto.getProductId().equals(arg.getProductId())))).thenReturn(contract);
-    when(customerRepository.getCustomer(requestDto.getCustomerId())).thenReturn(ContractMock.getCustomerResponse());
-    when(productRepository.getProduct(requestDto.getProductId())).thenReturn(ContractMock.getProductResponse());
+    when(contractRepository.saveAndFlush(
+            argThat(
+                arg ->
+                    requestDto.getCustomerId().equals(arg.getCustomerId())
+                        && requestDto.getProductId().equals(arg.getProductId()))))
+        .thenReturn(contract);
+    when(customerRepository.getCustomer(requestDto.getCustomerId()))
+        .thenReturn(ContractMock.getCustomerResponse());
+    when(productRepository.getProduct(requestDto.getProductId()))
+        .thenReturn(ContractMock.getProductResponse());
 
     var savedContract = classUnderTest.createContract(requestDto);
 
-    verify(contractRepository).saveAndFlush(argThat(arg -> {
-      assertEquals(requestDto.getCustomerId(), arg.getCustomerId());
-      assertEquals(requestDto.getDeviceCode(), arg.getDeviceCode());
-      assertEquals(requestDto.getPeriod(), arg.getPeriod());
-      assertEquals(requestDto.getProductId(), arg.getProductId());
-      return true;
-    }));
+    verify(contractRepository)
+        .saveAndFlush(
+            argThat(
+                arg -> {
+                  assertEquals(requestDto.getCustomerId(), arg.getCustomerId());
+                  assertEquals(requestDto.getDeviceCode(), arg.getDeviceCode());
+                  assertEquals(requestDto.getPeriod(), arg.getPeriod());
+                  assertEquals(requestDto.getProductId(), arg.getProductId());
+                  return true;
+                }));
 
     assertNotNull(savedContract);
     assertContractResponseWithRequest(requestDto, savedContract);
   }
 
-  private void assertContractResponseWithRequest(ContractCreateRequestDto requestDto, ContractResponseDto responseDto) {
+  private void assertContractResponseWithRequest(
+      ContractCreateRequestDto requestDto, ContractResponseDto responseDto) {
     assertEquals(requestDto.getCustomerId(), responseDto.getCustomerId());
     assertEquals(requestDto.getDeviceCode(), responseDto.getDeviceCode());
     assertEquals(requestDto.getPeriod(), responseDto.getPeriod());
@@ -91,16 +98,22 @@ class ContractServiceImplTest {
   @Test
   void createContract_throwsExceptionWhenDataIntegrityIsViolated() {
     ContractCreateRequestDto requestDto = ContractMock.getCreateContractRequest();
-    when(customerRepository.getCustomer(requestDto.getCustomerId())).thenReturn(ContractMock.getCustomerResponse());
-    when(productRepository.getProduct(requestDto.getProductId())).thenReturn(ContractMock.getProductResponse());
+    when(customerRepository.getCustomer(requestDto.getCustomerId()))
+        .thenReturn(ContractMock.getCustomerResponse());
+    when(productRepository.getProduct(requestDto.getProductId()))
+        .thenReturn(ContractMock.getProductResponse());
 
     doThrow(new DataIntegrityViolationException("Database error"))
-            .when(contractRepository)
-            .saveAndFlush(any(ContractEntity.class));
+        .when(contractRepository)
+        .saveAndFlush(any(ContractEntity.class));
 
-    ContractCreateException thrown = assertThrows(ContractCreateException.class, () -> {
-      classUnderTest.createContract(requestDto);
-    }, "Expected createContract to throw, but it didn't");
+    ContractCreateException thrown =
+        assertThrows(
+            ContractCreateException.class,
+            () -> {
+              classUnderTest.createContract(requestDto);
+            },
+            "Expected createContract to throw, but it didn't");
 
     assertEquals(CONTRACT_SAVE_ERROR, thrown.getMessage(), "Exception message does not match");
   }
@@ -108,17 +121,20 @@ class ContractServiceImplTest {
   @Test
   void testFindContractsReturnsCorrectData() {
     Pageable pageable = PageRequest.of(0, 10);
-    List<ContractPageDto> contractEntityList =
-            List.of(new ContractPageDtoMock());
+    List<ContractPageDto> contractEntityList = List.of(new ContractPageDtoMock());
     Page<ContractPageDto> contractPage =
-            new PageImpl<>(contractEntityList, pageable, contractEntityList.size());
+        new PageImpl<>(contractEntityList, pageable, contractEntityList.size());
 
     when(contractRepository.findBy(ArgumentMatchers.<Specification<ContractEntity>>any(), any()))
-            .thenReturn(contractPage);
+        .thenReturn(contractPage);
 
     ContractPageResponseDto result =
-            classUnderTest.findContracts(
-                    ContractPageRequestDto.builder().build());
+        classUnderTest.findContracts(
+            ContractPageRequestDto.builder()
+                .customerName("Bob")
+                .deviceCode("123455")
+                .contractStatus(ContractStatusDto.CREATED)
+                .build());
 
     assertNotNull(result);
     assertEquals(contractEntityList.size(), result.getContracts().size());
@@ -129,17 +145,16 @@ class ContractServiceImplTest {
   @Test
   void testFindContractsByCreatedOn() {
     Pageable pageable = PageRequest.of(0, 10);
-    List<ContractPageDto> contractEntityList =
-            List.of(new ContractPageDtoMock());
+    List<ContractPageDto> contractEntityList = List.of(new ContractPageDtoMock());
     Page<ContractPageDto> contractPage =
-            new PageImpl<>(contractEntityList, pageable, contractEntityList.size());
+        new PageImpl<>(contractEntityList, pageable, contractEntityList.size());
 
     when(contractRepository.findBy(ArgumentMatchers.<Specification<ContractEntity>>any(), any()))
-            .thenReturn(contractPage);
+        .thenReturn(contractPage);
 
     ContractPageResponseDto result =
-            classUnderTest.findContracts(
-                    ContractPageRequestDto.builder().createdOn(LocalDate.now()).build());
+        classUnderTest.findContracts(
+            ContractPageRequestDto.builder().createdOn(LocalDate.now()).build());
 
     assertNotNull(result);
     assertEquals(contractEntityList.size(), result.getContracts().size());
@@ -158,7 +173,7 @@ class ContractServiceImplTest {
 
     assertEquals(expectedResponse, actualResponse);
     verify(contractRepository).findById(mockContract.getId());
-    }
+  }
 
   @Test
   void updateContractStatus_ContractFound() {
@@ -168,22 +183,29 @@ class ContractServiceImplTest {
     request.setNewStatus(ContractStatusDto.ACTIVE);
 
     when(contractRepository.findById(mockContract.getId())).thenReturn(Optional.of(mockContract));
-    when(contractRepository.saveAndFlush(any(ContractEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(contractRepository.saveAndFlush(any(ContractEntity.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
     // Execution
-    ContractResponseDto response = classUnderTest.updateContractStatus(mockContract.getId(), request);
+    ContractResponseDto response =
+        classUnderTest.updateContractStatus(mockContract.getId(), request);
 
     // Verify
     assertNotNull(response);
 
     verify(contractRepository).findById(mockContract.getId());
-    verify(contractRepository).saveAndFlush(argThat(arg -> {
-      assertEquals(LocalDate.now(), arg.getContractStartDate());
-      assertEquals(LocalDate.now().plusYears(mockContract.getPeriod()), arg.getContractPlannedEndDate());
-      assertEquals(ContractStatus.ACTIVE, arg.getContractStatus());
+    verify(contractRepository)
+        .saveAndFlush(
+            argThat(
+                arg -> {
+                  assertEquals(LocalDate.now(), arg.getContractStartDate());
+                  assertEquals(
+                      LocalDate.now().plusYears(mockContract.getPeriod()),
+                      arg.getContractPlannedEndDate());
+                  assertEquals(ContractStatus.ACTIVE, arg.getContractStatus());
 
-      return true;
-    }));
-    }
+                  return true;
+                }));
+  }
 
   @Test
   void updateContractStatus_ContractFoundTerminated() {
@@ -193,19 +215,24 @@ class ContractServiceImplTest {
     request.setNewStatus(ContractStatusDto.TERMINATED);
 
     when(contractRepository.findById(mockContract.getId())).thenReturn(Optional.of(mockContract));
-    when(contractRepository.saveAndFlush(any(ContractEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(contractRepository.saveAndFlush(any(ContractEntity.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
     // Execution
-    ContractResponseDto response = classUnderTest.updateContractStatus(mockContract.getId(), request);
+    ContractResponseDto response =
+        classUnderTest.updateContractStatus(mockContract.getId(), request);
 
     // Verify
     assertNotNull(response);
 
     verify(contractRepository).findById(mockContract.getId());
-    verify(contractRepository).saveAndFlush(argThat(arg -> {
-      assertEquals(ContractStatus.TERMINATED, arg.getContractStatus());
+    verify(contractRepository)
+        .saveAndFlush(
+            argThat(
+                arg -> {
+                  assertEquals(ContractStatus.TERMINATED, arg.getContractStatus());
 
-      return true;
-    }));
+                  return true;
+                }));
   }
 
   @Test
@@ -215,9 +242,11 @@ class ContractServiceImplTest {
     when(contractRepository.findById(id)).thenReturn(Optional.empty());
 
     // Execution & Verification
-    assertThrows(ContractNotFoundException.class, () -> {
-      classUnderTest.updateContractStatus(id, new UpdateContractStatusRequestDto());
-    });
+    assertThrows(
+        ContractNotFoundException.class,
+        () -> {
+          classUnderTest.updateContractStatus(id, new UpdateContractStatusRequestDto());
+        });
 
     verify(contractRepository).findById(id);
     verify(contractRepository, never()).saveAndFlush(any(ContractEntity.class));
