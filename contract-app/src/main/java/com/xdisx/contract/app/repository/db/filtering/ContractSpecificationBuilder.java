@@ -4,6 +4,8 @@ import com.xdisx.contract.api.dto.ContractStatusDto;
 import com.xdisx.contract.api.dto.request.ContractPageRequestDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
 import com.xdisx.contract.app.repository.db.entity.ContractStatus;
+import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.criteria.Predicate;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -31,7 +33,31 @@ public class ContractSpecificationBuilder {
             specifications.add(buildEqualSpecificationContractStatus(contractPageRequest.getContractStatus()));
         }
 
+        if (StringUtils.isNotBlank(contractPageRequest.getCustomerName())) {
+            specifications.add(buildCustomerNameLikeSpecification(contractPageRequest.getCustomerName()));
+        }
+
+        if (StringUtils.isNotBlank(contractPageRequest.getDeviceCode())) {
+                specifications.add(buildDeviceCodeLikeSpec(contractPageRequest.getDeviceCode()));
+        }
+
         return Specification.allOf(specifications);
+    }
+
+    private static Specification<ContractEntity> buildDeviceCodeLikeSpec(String deviceCode) {
+        return (root, query, builder) -> {
+            String pattern = "%" + deviceCode.trim().toLowerCase() + "%";
+
+            return  builder.like(builder.lower(root.get("deviceCode")), pattern);
+        };
+    }
+
+    private static Specification<ContractEntity> buildCustomerNameLikeSpecification(String customerName) {
+        return (root, query, builder) -> {
+            String pattern = "%" + customerName.trim().toLowerCase() + "%";
+
+            return  builder.like(builder.lower(root.get("customerName")), pattern);
+        };
     }
 
     private static Specification<ContractEntity> buildEqualSpecificationContractStatus(ContractStatusDto contractStatus) {
