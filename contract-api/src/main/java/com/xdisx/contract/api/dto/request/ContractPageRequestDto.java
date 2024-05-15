@@ -1,5 +1,6 @@
 package com.xdisx.contract.api.dto.request;
 
+import com.xdisx.contract.api.dto.ContractStatusDto;
 import com.xdisx.contract.api.dto.OrderByDirection;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -9,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Data
@@ -26,10 +28,12 @@ public class ContractPageRequestDto {
     private Integer pageSize = 10;
 
     @NotNull(message = "Sort by must not be null!") @Builder.Default
-    private String sortBy = "created";
+    private String sortBy = "modified";
 
     @NotNull(message = "Order by must not be null!") @Builder.Default
     private OrderByDirection orderBy = OrderByDirection.DESC;
 
     private LocalDate createdOn;
+    private BigInteger customerId;
+    private ContractStatusDto contractStatus;
 }

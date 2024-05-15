@@ -18,6 +18,13 @@ allprojects {
 		mavenCentral()
 		maven { url 'https://repo.spring.io/milestone' }
 		maven { url 'https://repo.spring.io/snapshot' }
+		maven {
+			url = uri("https://maven.pkg.github.com/xDisx/shared-libs")
+			credentials {
+				username = findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+				password = findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+			}
+		}
 	}
 }
 

@@ -35,3 +35,6 @@ xdisx:
   cors:
     origins:
       - http://localhost:4200
+  contract:
+    customer:
+      url: http://localhost:1239
