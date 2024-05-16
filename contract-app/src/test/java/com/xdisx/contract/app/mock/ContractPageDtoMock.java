@@ -86,4 +86,9 @@ public class ContractPageDtoMock implements ContractPageDto {
     public String getProductName() {
         return "Basic assurance";
     }
+
+    @Override
+    public byte[] getContractDocument() {
+        return new byte[] {1,2,3};
+    }
 }

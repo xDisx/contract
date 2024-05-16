@@ -30,6 +30,8 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+          lob:
+            non_contextual_creation: true
         default_schema: ${spring.datasource.hikari.schema}
 xdisx:
   cors:
@@ -40,3 +42,5 @@ xdisx:
       url: http://localhost:1239
     product:
       url: http://localhost:1240
+    document:
+      url: http://localhost:1236

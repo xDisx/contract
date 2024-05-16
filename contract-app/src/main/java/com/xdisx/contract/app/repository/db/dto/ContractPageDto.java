@@ -24,4 +24,5 @@ public interface ContractPageDto {
     LocalDate getContractStartDate();
     LocalDate getContractPlannedEndDate();
     String getProductName();
+    byte[] getContractDocument();
 }

@@ -12,3 +12,5 @@ spring:
         client-name: customer-app
       product:
         client-name: product-app
+      document:
+        client-name: document-app

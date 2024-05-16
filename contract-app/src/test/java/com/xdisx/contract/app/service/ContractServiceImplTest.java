@@ -15,6 +15,7 @@ import com.xdisx.contract.app.repository.db.ContractRepository;
 import com.xdisx.contract.app.repository.db.dto.ContractPageDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
 import com.xdisx.contract.app.repository.db.entity.ContractStatus;
+import com.xdisx.contract.app.repository.document.DocumentRepository;
 import com.xdisx.contract.app.repository.product.ProductRepository;
 import com.xdisx.contract.app.service.converter.ContractConverter;
 import com.xdisx.customer.api.dto.response.CustomerResponseDto;
@@ -24,13 +25,18 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -49,6 +55,8 @@ class ContractServiceImplTest {
   @Mock private CustomerRepository customerRepository;
 
   @Mock private ProductRepository productRepository;
+
+  @Mock private DocumentRepository documentRepository;
 
   @InjectMocks private ContractServiceImpl classUnderTest;
 
@@ -177,7 +185,7 @@ class ContractServiceImplTest {
   }
 
   @Test
-  void updateContractStatus_ContractFound() {
+  void updateContractStatus_ContractFound() throws IOException {
     ContractEntity mockContract = ContractMock.getContractEntity();
 
     UpdateContractStatusRequestDto request = new UpdateContractStatusRequestDto();
@@ -186,6 +194,17 @@ class ContractServiceImplTest {
     when(contractRepository.findById(mockContract.getId())).thenReturn(Optional.of(mockContract));
     when(contractRepository.saveAndFlush(any(ContractEntity.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
+    when(customerRepository.getCustomer(mockContract.getCustomerId())).thenReturn(ContractMock.getCustomerResponse());
+    when(productRepository.getProduct(mockContract.getProductId())).thenReturn(ContractMock.getProductResponse());
+
+    byte[] pdfBytes = new byte[10]; // Mock PDF bytes
+
+    Resource mockResource = mock(Resource.class);
+    when(mockResource.getInputStream()).thenReturn(new ByteArrayInputStream(pdfBytes));
+    ResponseEntity<Resource> mockResponse = ResponseEntity.ok(mockResource);
+
+
+    when(documentRepository.generateDocument(any())).thenReturn(mockResponse);
     // Execution
     ContractResponseDto response =
         classUnderTest.updateContractStatus(mockContract.getId(), request);

@@ -41,7 +41,9 @@ public class ContractConverter {
                 .productId(contract.getProductId()).created(contract.getCreated()).customerName(contract.getCustomerName())
                 .acquisitionDate(contract.getAcquisitionDate()).contractStatus(ContractStatusDto.valueOf(contract.getContractStatus().toString()))
                 .contractStartDate(contract.getContractStartDate()).contractPlannedEndDate(contract.getContractPlannedEndDate())
-                .productName(contract.getProductName()).build();
+                .productName(contract.getProductName())
+                .contractDocument(contract.getContractDocument())
+                .build();
     }
 
     public PageRequest toPageRequest(ContractPageRequestDto contractPageRequest) {
@@ -64,6 +66,8 @@ public class ContractConverter {
                 .productId(pageDto.getProductId()).created(pageDto.getCreated()).customerName(pageDto.getCustomerName())
                 .acquisitionDate(pageDto.getAcquisitionDate()).contractStatus(ContractStatusDto.valueOf(pageDto.getContractStatus().toString()))
                 .contractStartDate(pageDto.getContractStartDate()).contractPlannedEndDate(pageDto.getContractPlannedEndDate())
-                .productName(pageDto.getProductName()).build();
+                .productName(pageDto.getProductName())
+                .contractDocument(pageDto.getContractDocument())
+                .build();
     }
 }
