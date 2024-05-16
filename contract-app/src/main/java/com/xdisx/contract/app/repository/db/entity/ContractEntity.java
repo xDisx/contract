@@ -68,4 +68,8 @@ public class ContractEntity extends BaseEntity {
     @Column(name = "product_name")
     private String productName;
 
+    @Lob
+    @Column(name = "contract_document")
+    private byte[] contractDocument;
+
 }

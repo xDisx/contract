@@ -36,4 +36,5 @@ public class ContractResponseDto {
     private LocalDate contractStartDate;
     private LocalDate contractPlannedEndDate;
     private String productName;
+    private byte[] contractDocument;
 }

@@ -14,6 +14,7 @@ import com.xdisx.contract.app.repository.db.dto.ContractPageDto;
 import com.xdisx.contract.app.repository.db.entity.ContractEntity;
 import com.xdisx.contract.app.repository.db.entity.ContractStatus;
 import com.xdisx.contract.app.repository.db.filtering.ContractSpecificationBuilder;
+import com.xdisx.contract.app.repository.document.DocumentRepository;
 import com.xdisx.contract.app.repository.product.ProductRepository;
 import com.xdisx.contract.app.service.converter.ContractConverter;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Objects;
+
+import com.xdisx.contract.app.service.converter.DocumentConverter;
 
 @Slf4j
 @Service
@@ -36,6 +41,7 @@ public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final DocumentRepository documentRepository;
 
     @Override
     @Transactional
@@ -98,6 +104,16 @@ public class ContractServiceImpl implements ContractService {
         if (ContractStatusDto.ACTIVE.equals(updateContractStatusRequest.getNewStatus())) {
             contract.setContractStartDate(LocalDate.now());
             contract.setContractPlannedEndDate(LocalDate.now().plusYears(contract.getPeriod()));
+
+            var customer = customerRepository.getCustomer(contract.getCustomerId());
+            var product = productRepository.getProduct(contract.getProductId());
+            var document = documentRepository.generateDocument(DocumentConverter.toDocumentRequest(contract, customer, product));
+
+            try {
+                contract.setContractDocument(Objects.requireNonNull(document.getBody()).getInputStream().readAllBytes());
+            } catch (IOException e) {
+                    log.warn("Could not extract the PDF for contract {}", contract.getId());
+            }
         }
         contract = saveAndFlushContract(contract);
 
