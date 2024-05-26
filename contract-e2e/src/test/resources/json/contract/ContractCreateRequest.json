@@ -1,9 +1,9 @@
 {
-  "customerId": 75,
+  "customerId": 1,
   "productId": 11,
-  "period": 2,
+  "period": 1,
   "price": 234,
   "deviceCode": "1234343",
-  "deviceType": "SMARTPHONE",
+  "deviceType": "LAPTOP",
   "acquisitionDate": "2024-03-31"
 }
