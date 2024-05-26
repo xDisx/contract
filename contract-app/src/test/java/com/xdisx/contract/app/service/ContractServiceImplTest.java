@@ -197,7 +197,7 @@ class ContractServiceImplTest {
     when(customerRepository.getCustomer(mockContract.getCustomerId())).thenReturn(ContractMock.getCustomerResponse());
     when(productRepository.getProduct(mockContract.getProductId())).thenReturn(ContractMock.getProductResponse());
 
-    byte[] pdfBytes = new byte[10]; // Mock PDF bytes
+    byte[] pdfBytes = new byte[10];
 
     Resource mockResource = mock(Resource.class);
     when(mockResource.getInputStream()).thenReturn(new ByteArrayInputStream(pdfBytes));
@@ -205,11 +205,9 @@ class ContractServiceImplTest {
 
 
     when(documentRepository.generateDocument(any())).thenReturn(mockResponse);
-    // Execution
     ContractResponseDto response =
         classUnderTest.updateContractStatus(mockContract.getId(), request);
 
-    // Verify
     assertNotNull(response);
 
     verify(contractRepository).findById(mockContract.getId());
@@ -237,11 +235,9 @@ class ContractServiceImplTest {
     when(contractRepository.findById(mockContract.getId())).thenReturn(Optional.of(mockContract));
     when(contractRepository.saveAndFlush(any(ContractEntity.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
-    // Execution
     ContractResponseDto response =
         classUnderTest.updateContractStatus(mockContract.getId(), request);
 
-    // Verify
     assertNotNull(response);
 
     verify(contractRepository).findById(mockContract.getId());
@@ -257,11 +253,9 @@ class ContractServiceImplTest {
 
   @Test
   void updateContractStatus_WhenContractNotFound() {
-    // Setup
     BigInteger id = BigInteger.valueOf(99);
     when(contractRepository.findById(id)).thenReturn(Optional.empty());
 
-    // Execution & Verification
     assertThrows(
         ContractNotFoundException.class,
         () -> {
